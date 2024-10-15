@@ -35,7 +35,7 @@ for i in range(num_of_targets):
     targetImg.append(pygame.image.load('target.png'))
     targetX.append(randint(0, 736))
     targetY.append(randint(0, 320))
-    targetX_change.append(0 if not i % 2 else 2.7)  # half the targets are stationary and half are moving
+    targetX_change.append(0 if not i % 2 else 2.7)
 
 # Arrow
 arrowImg = pygame.image.load('arrow.png')
@@ -43,7 +43,7 @@ arrowX = 0
 arrowY = 480
 # arrow won't move in X direction
 arrowY_change = 6
-arrow_state = "loaded"  # Loaded - you can't see the arrow on the screen, Fire - The arrow is in motion
+arrow_is_fired = 0  # 0: loaded - you can't see the arrow on the screen, 1: fired - The arrow is in motion
 
 # Score
 score_value = 0
@@ -77,6 +77,7 @@ def game_over_text():  # displays 'GAME OVER' in the middle of screen when time 
 
 def final_medal_text(medal_):  # displays the name of the medal
     delta_x = 0
+    medal_text = None
     if medal_ == 'BRONZE MEDAL':
         medal_text = medal_font.render("You got: " + str(medal_), True, (167, 112, 68))
         delta_x = -18
@@ -92,16 +93,17 @@ def final_medal_text(medal_):  # displays the name of the medal
     screen.blit(medal_text, (150 + delta_x, 260))
 
 
-def final_medal_img(medal_type):  # displays the image of respective medal, right below the medal text
+def final_medal_img(medal_type):
+    medal_img = None
     if medal_type == "BRONZE MEDAL":
-        medalImg = pygame.image.load("bronze-medal.png")
+        medal_img = pygame.image.load("bronze-medal.png")
     if medal_type == 'SILVER MEDAL':
-        medalImg = pygame.image.load("silver-medal.png")
+        medal_img = pygame.image.load("silver-medal.png")
     if medal_type == "GOLD MEDAL":
-        medalImg = pygame.image.load("gold-medal.png")
+        medal_img = pygame.image.load("gold-medal.png")
     if medal_type == "NO MEDAL":
-        medalImg = pygame.image.load("archer.png")
-    screen.blit(medalImg, (368, 350))
+        medal_img = pygame.image.load("archer.png")
+    screen.blit(medal_img, (368, 350))
 
 
 def player(x, y):  # displays the bow on the screen
@@ -113,8 +115,6 @@ def target(x, y, z):  # displays the targets
 
 
 def fire_arrow(x, y):  # function to display and update the position of the arrow
-    global arrow_state
-    arrow_state = "fire"
     screen.blit(arrowImg, (x + 16, y + 10))
 
 
@@ -146,10 +146,11 @@ while running:
             if event.key == pygame.K_RIGHT:
                 playerX_change = 3
             if event.key == pygame.K_SPACE:
-                if arrow_state == "loaded":
+                if not arrow_is_fired:  # arrow is loaded and ready to fire
                     arrow_sound = pygame.mixer.Sound('arrow-whoosh.wav')
                     arrow_sound.play()
                     arrowX = playerX
+                    arrow_is_fired = 1
                     fire_arrow(playerX, arrowY)
 
         if event.type == pygame.KEYUP:
@@ -168,7 +169,7 @@ while running:
 
         # Game Over
         seconds = (perf_counter() - start_time)  # calculate how many seconds
-        time_value = int(60 - seconds)  # time remaining
+        time_value = int(60 - seconds)  # calculates time remaining
         if time_value <= 0:
             time_value = 0
         if seconds > 60:  # if more than 60 seconds, game over
@@ -197,7 +198,7 @@ while running:
         collision = collide(targetX[i], targetY[i], arrowX, arrowY)
         if collision:  # if collision is detected, instantly returns arrow to loaded state and respawns the target
             arrowY = 480
-            arrow_state = "loaded"
+            arrow_is_fired = 0
             if not i % 2:
                 score_value += 1
             else:
@@ -210,10 +211,10 @@ while running:
     # arrow Movement
     if arrowY <= 0:
         arrowY = 480  # arrow missed
-        arrow_state = "loaded"
-    if arrow_state == "fire":
+        arrow_is_fired = 0
+    if arrow_is_fired:
         fire_arrow(arrowX, arrowY)  # updates the position of arrow
-        arrowY -= arrowY_change
+        arrowY -= arrowY_change  # top most part is 0, hence we need to subtract
 
     player(playerX, playerY)
     show_score(textX, textY)
