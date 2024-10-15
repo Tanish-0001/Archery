@@ -35,7 +35,7 @@ for i in range(num_of_targets):
     targetImg.append(pygame.image.load('target.png'))
     targetX.append(randint(0, 736))
     targetY.append(randint(0, 320))
-    targetX_change.append(0 if not i % 2 else 2.7)  # 0, 2, 4, 6 are stationary targets
+    targetX_change.append(0 if not i % 2 else 2.7)  # half the targets are stationary and half are moving
 
 # Arrow
 arrowImg = pygame.image.load('arrow.png')
@@ -168,7 +168,7 @@ while running:
 
         # Game Over
         seconds = (perf_counter() - start_time)  # calculate how many seconds
-        time_value = int(60 - seconds)  # calculates time remaining
+        time_value = int(60 - seconds)  # time remaining
         if time_value <= 0:
             time_value = 0
         if seconds > 60:  # if more than 60 seconds, game over
@@ -213,7 +213,7 @@ while running:
         arrow_state = "loaded"
     if arrow_state == "fire":
         fire_arrow(arrowX, arrowY)  # updates the position of arrow
-        arrowY -= arrowY_change  # top most part is 0, hence we need to subtract
+        arrowY -= arrowY_change
 
     player(playerX, playerY)
     show_score(textX, textY)
