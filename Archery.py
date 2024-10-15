@@ -54,7 +54,6 @@ textY = 10
 game_over_font = pygame.font.Font('Delight Candles.ttf', 64)
 
 medal_font = pygame.font.Font('Delight Candles.ttf', 45)
-medal_text, medalImg = False, False
 
 # Timer co-ordinates
 timeX = 10
@@ -77,7 +76,6 @@ def game_over_text():  # displays 'GAME OVER' in the middle of screen when time 
 
 
 def final_medal_text(medal_):  # displays the name of the medal
-    global medal_text
     delta_x = 0
     if medal_ == 'BRONZE MEDAL':
         medal_text = medal_font.render("You got: " + str(medal_), True, (167, 112, 68))
@@ -95,7 +93,6 @@ def final_medal_text(medal_):  # displays the name of the medal
 
 
 def final_medal_img(medal_type):  # displays the image of respective medal, right below the medal text
-    global medalImg
     if medal_type == "BRONZE MEDAL":
         medalImg = pygame.image.load("bronze-medal.png")
     if medal_type == 'SILVER MEDAL':
