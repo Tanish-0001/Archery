@@ -41,8 +41,8 @@ for i in range(num_of_targets):
 arrowImg = pygame.image.load('arrow.png')
 arrowX = 0
 arrowY = 480
-# arrow won't move in X direction
-arrowY_change = 6
+
+arrowY_change = 6  # arrow only moves in y direction
 arrow_is_fired = 0  # 0: loaded - you can't see the arrow on the screen, 1: fired - The arrow is in motion
 
 # Score
